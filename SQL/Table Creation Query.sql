@@ -1,0 +1,37 @@
+CREATE TABLE Patient (
+    P_ID       INT IDENTITY(1,1) PRIMARY KEY,
+    P_NAME     NVARCHAR(100) NOT NULL,
+    Age        TINYINT NOT NULL,
+    P_NUM      NVARCHAR(20) NULL
+);
+
+CREATE TABLE Department (
+    D_ID       INT IDENTITY(1,1) PRIMARY KEY,
+    D_NAME     NVARCHAR(100) NOT NULL,
+    Location   NVARCHAR(150) NULL
+);
+
+CREATE TABLE Doctor (
+    DOC_ID     INT IDENTITY(1,1) PRIMARY KEY,
+    DOC_NAME   NVARCHAR(100) NOT NULL,
+    Specialty  NVARCHAR(80) NOT NULL,
+    DD_ID      INT NOT NULL,
+    FOREIGN KEY (DD_ID) REFERENCES Department(D_ID)
+);
+
+CREATE TABLE Appointment (
+    APP_ID     INT IDENTITY(1,1) PRIMARY KEY,
+    Date       DATE NOT NULL,
+    Time       TIME NOT NULL,
+    DA_ID      INT NOT NULL,
+    PA_ID      INT NOT NULL,
+    FOREIGN KEY (DA_ID) REFERENCES Doctor(DOC_ID),
+    FOREIGN KEY (PA_ID) REFERENCES Patient(P_ID)
+);
+
+CREATE TABLE Prescription (
+    AP_ID      INT NOT NULL,
+    Presc_ID   INT IDENTITY(1,1) PRIMARY KEY,
+    Medication NVARCHAR(200) NOT NULL,
+    FOREIGN KEY (AP_ID) REFERENCES Appointment(APP_ID)
+);
