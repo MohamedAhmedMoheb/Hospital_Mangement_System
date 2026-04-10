@@ -63,6 +63,26 @@ namespace Hospital_Mangement_System.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Gemini_Generated_Image_r0xruzr0xruzr0xr {
+            get {
+                object obj = ResourceManager.GetObject("Gemini_Generated_Image_r0xruzr0xruzr0xr", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Gemini_Generated_Image_x2uz7nx2uz7nx2uz {
+            get {
+                object obj = ResourceManager.GetObject("Gemini_Generated_Image_x2uz7nx2uz7nx2uz", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap hospital_logo_vector_1277164_14205 {
             get {
                 object obj = ResourceManager.GetObject("hospital-logo-vector_1277164-14205", resourceCulture);
@@ -76,6 +96,26 @@ namespace Hospital_Mangement_System.Properties {
         internal static System.Drawing.Bitmap images {
             get {
                 object obj = ResourceManager.GetObject("images", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Screenshot_2026_04_10_222808 {
+            get {
+                object obj = ResourceManager.GetObject("Screenshot 2026-04-10 222808", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Screenshot_2026_04_10_223408 {
+            get {
+                object obj = ResourceManager.GetObject("Screenshot 2026-04-10 223408", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
