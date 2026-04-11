@@ -1,4 +1,6 @@
 using System;
+using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -9,62 +11,90 @@ namespace Hospital_Mangement_System
         public DepartmentForm()
         {
             InitializeComponent();
+            LoadDepartments();
+        }
+
+        private void LoadDepartments()
+        {
+            try
+            {
+                listViewDepts.Items.Clear();
+                DataTable dt = DBHelper.ExecuteQuery("SELECT D_ID, D_NAME, Location FROM Department");
+                foreach (DataRow row in dt.Rows)
+                {
+                    ListViewItem item = new ListViewItem(row["D_ID"].ToString());
+                    item.SubItems.Add(row["D_NAME"].ToString());
+                    item.SubItems.Add(row["Location"] == DBNull.Value ? "" : row["Location"].ToString());
+                    listViewDepts.Items.Add(item);
+                }
+            }
+            catch (Exception ex) { MessageBox.Show("Error loading departments:\n" + ex.Message, "DB Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtDName.Text))
+            { MessageBox.Show("D_NAME is required.", "Validation", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+            try
             {
-                MessageBox.Show("D_NAME is required.", "Validation",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                DBHelper.ExecuteNonQuery(
+                    "INSERT INTO Department (D_NAME, Location) VALUES (@name, @loc)",
+                    new SqlParameter[] {
+                        new SqlParameter("@name", txtDName.Text.Trim()),
+                        new SqlParameter("@loc",  string.IsNullOrWhiteSpace(txtLocation.Text)
+                                                  ? (object)DBNull.Value : txtLocation.Text.Trim())
+                    });
+                MessageBox.Show("Department added!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ClearFields(); LoadDepartments();
             }
-
-            ListViewItem item = new ListViewItem("Auto");   // D_ID is IDENTITY
-            item.SubItems.Add(txtDName.Text);
-            item.SubItems.Add(txtLocation.Text);
-            listViewDepts.Items.Add(item);
-
-            ClearFields();
-            MessageBox.Show("Department added!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            catch (Exception ex) { MessageBox.Show("Error:\n" + ex.Message, "DB Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
             if (listViewDepts.SelectedItems.Count == 0)
+            { MessageBox.Show("Select a department first.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information); return; }
+            try
             {
-                MessageBox.Show("Select a department to update.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
+                int did = int.Parse(listViewDepts.SelectedItems[0].Text);
+                DBHelper.ExecuteNonQuery(
+                    "UPDATE Department SET D_NAME=@name, Location=@loc WHERE D_ID=@id",
+                    new SqlParameter[] {
+                        new SqlParameter("@name", txtDName.Text.Trim()),
+                        new SqlParameter("@loc",  string.IsNullOrWhiteSpace(txtLocation.Text)
+                                                  ? (object)DBNull.Value : txtLocation.Text.Trim()),
+                        new SqlParameter("@id",   did)
+                    });
+                MessageBox.Show("Department updated!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ClearFields(); LoadDepartments();
             }
-            ListViewItem item = listViewDepts.SelectedItems[0];
-            item.SubItems[1].Text = txtDName.Text;
-            item.SubItems[2].Text = txtLocation.Text;
-            MessageBox.Show("Department updated!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            catch (Exception ex) { MessageBox.Show("Error:\n" + ex.Message, "DB Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
             if (listViewDepts.SelectedItems.Count == 0)
-            {
-                MessageBox.Show("Select a department to delete.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
+            { MessageBox.Show("Select a department first.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information); return; }
             if (MessageBox.Show("Delete this department?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
-                listViewDepts.SelectedItems[0].Remove();
-                ClearFields();
+                try
+                {
+                    int did = int.Parse(listViewDepts.SelectedItems[0].Text);
+                    DBHelper.ExecuteNonQuery("DELETE FROM Department WHERE D_ID=@id",
+                        new[] { new SqlParameter("@id", did) });
+                    MessageBox.Show("Deleted!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    ClearFields(); LoadDepartments();
+                }
+                catch (Exception ex) { MessageBox.Show("Error:\n" + ex.Message, "DB Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
             }
         }
-
-        private void btnClear_Click(object sender, EventArgs e) => ClearFields();
-        private void btnBack_Click(object sender, EventArgs e) => this.Close();
 
         private void listViewDepts_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listViewDepts.SelectedItems.Count > 0)
             {
-                ListViewItem item = listViewDepts.SelectedItems[0];
-                txtDName.Text    = item.SubItems[1].Text;
+                var item = listViewDepts.SelectedItems[0];
+                txtDName.Text = item.SubItems[1].Text;
                 txtLocation.Text = item.SubItems[2].Text;
             }
         }
@@ -81,11 +111,8 @@ namespace Hospital_Mangement_System
             }
         }
 
-        private void ClearFields()
-        {
-            txtDName.Clear();
-            txtLocation.Clear();
-            listViewDepts.SelectedItems.Clear();
-        }
+        private void btnClear_Click(object sender, EventArgs e) => ClearFields();
+        private void btnBack_Click(object sender, EventArgs e) => this.Close();
+        private void ClearFields() { txtDName.Clear(); txtLocation.Clear(); listViewDepts.SelectedItems.Clear(); }
     }
 }
