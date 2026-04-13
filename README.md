@@ -1,5 +1,5 @@
-# This a Uni Project 
-## The Creditials of the login is ID = "249216" , Password="123"
+## This a Uni Project 
+## The Creditials of the login are ID = "249216" , Password="123"
 
 
 # ER Diagram
