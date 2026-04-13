@@ -11,20 +11,31 @@ namespace Hospital_Mangement_System
         public PrescriptionForm()
         {
             InitializeComponent();
+            listViewPrescriptions.Columns.Add("Doctor Name", 140);
+            listViewPrescriptions.Columns.Add("Patient Name", 140);
             LoadPrescriptions();
         }
 
+       
         private void LoadPrescriptions()
         {
             try
             {
                 listViewPrescriptions.Items.Clear();
-                DataTable dt = DBHelper.ExecuteQuery("SELECT Presc_ID, Medication, AP_ID FROM Prescription");
+                DataTable dt = DBHelper.ExecuteQuery(@"
+                    SELECT pr.Presc_ID, pr.AP_ID, pr.Medication,
+                           d.DOC_NAME AS DoctorName, p.P_NAME AS PatientName
+                    FROM Prescription pr
+                    LEFT JOIN Appointment a ON pr.AP_ID = a.APP_ID
+                    LEFT JOIN Doctor d ON a.DA_ID = d.DOC_ID
+                    LEFT JOIN Patient p ON a.PA_ID = p.P_ID");
                 foreach (DataRow row in dt.Rows)
                 {
                     ListViewItem item = new ListViewItem(row["Presc_ID"].ToString());
                     item.SubItems.Add(row["Medication"].ToString());
                     item.SubItems.Add(row["AP_ID"].ToString());
+                    item.SubItems.Add(row["DoctorName"].ToString());
+                    item.SubItems.Add(row["PatientName"].ToString());
                     listViewPrescriptions.Items.Add(item);
                 }
             }
@@ -108,7 +119,10 @@ namespace Hospital_Mangement_System
             {
                 bool match = string.IsNullOrWhiteSpace(q) ||
                              item.SubItems[1].Text.ToLower().Contains(q) ||
-                             item.SubItems[2].Text.ToLower().Contains(q);
+                             item.SubItems[2].Text.ToLower().Contains(q) ||
+                             item.SubItems[3].Text.ToLower().Contains(q) ||
+                             item.SubItems[4].Text.ToLower().Contains(q);
+                            
                 item.BackColor = (!string.IsNullOrWhiteSpace(q) && match) ? Color.LightYellow : Color.White;
             }
         }

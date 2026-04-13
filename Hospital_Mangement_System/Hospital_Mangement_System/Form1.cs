@@ -25,20 +25,13 @@ namespace Hospital_Mangement_System
             new DoctorForm().Show();
         }
 
-        // button4 → Medical Records  →  now Prescription (matches your DB)
+        // button4 → Prescription 
         private void button4_Click(object sender, EventArgs e)
         {
             new PrescriptionForm().Show();
         }
 
-        // ── Tip: add a 5th button on the menu for Department ──────────
-        // When you add button5 on the designer, hook it up like this:
-        // private void button5_Click(object sender, EventArgs e)
-        // {
-        //     new DepartmentForm().Show();
-        // }
-
-        // ── Unused stubs ──────────────────────────────────────────────
+        
         private void pictureBox1_Click(object sender, EventArgs e) { }
         private void textBox1_TextChanged(object sender, EventArgs e) { }
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e) { }
